@@ -5,7 +5,7 @@ const BASE = "https://carpooling-5as1.onrender.com"
 // authentication
 export const LOGIN_URL = `${BASE}/auth/login`;
 export const SIGNUP_URL = `${BASE}/auth/sign-up`;
-export const GOOGLE_URL = `${BASE}/auth/google`;
+export const GOOGLE_URL = `${BASE}/auth/google/callback`;
 export const VERIFY_EMAIL = `${BASE}/auth/verify/email`;
 export const VERIFY_OTP = `${BASE}/auth/verify/otp`;
 export const VERIFY_TOKEN = `${BASE}/auth/validate`;
