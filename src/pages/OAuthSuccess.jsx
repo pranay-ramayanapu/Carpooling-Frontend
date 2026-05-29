@@ -12,7 +12,7 @@ function OAuthSuccess() {
 
     if (token) {
       localStorage.setItem("AuthToken", token);
-      localStorage.setItem("role","Rider");
+      localStorage.setItem("role", "RIDER");
       console.log("Token stored. Redirecting to dashboard.");
       navigate("/dashboard");
     }
