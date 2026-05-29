@@ -1,5 +1,4 @@
-// const BASE = "http://localhost:5001"
-const BASE = "https://carpooling-5as1.onrender.com"
+const BASE = import.meta.env.VITE_API_BASE_URL || "https://carpooling-5as1.onrender.com";
 
 
 // authentication
