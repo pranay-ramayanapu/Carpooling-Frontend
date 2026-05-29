@@ -185,8 +185,8 @@ function Signup() {
                   {otpSent && resendTimeout > 0
                     ? `Resend OTP (${resendTimeout}s)`
                     : otpSent
-                    ? "Resend OTP"
-                    : "Send OTP"}
+                      ? "Resend OTP"
+                      : "Send OTP"}
                 </button>
                 {otpSent && !otpVerified && (
                   <div className="flex-1">

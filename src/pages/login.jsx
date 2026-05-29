@@ -22,43 +22,43 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-        const response = await axios.post(LOGIN_URL,formData);
+    try {
+      const response = await axios.post(LOGIN_URL, formData);
 
-        if (response.status == 200) {
-            notifications.show({
-                title: "Succesfully loged in",
-                message: `Succesfully loged in`,
-                color: "green",
-            });
-            localStorage.setItem("AuthToken",response.data.jwtToken);
-            localStorage.setItem("role",response.data.role);
-            if(response.data.role==="ADMIN") navigate("/admin");
-            else navigate("/dashboard");
-        }
-        else if( response.status == 403) {
-            notifications.show({    
-                title: "Failed to signup", 
-                message: "Email already exists, please try again",
-                color: "red", 
-            });
-        }
-        else{
-            notifications.show({
-                title: "Failed to login", 
-                message: "Failed to login, please try again",
-                color: "red", 
-            });
-        }
-        console.log("login Data:", formData);
+      if (response.status == 200) {
+        notifications.show({
+          title: "Succesfully loged in",
+          message: `Succesfully loged in`,
+          color: "green",
+        });
+        localStorage.setItem("AuthToken", response.data.jwtToken);
+        localStorage.setItem("role", response.data.role);
+        if (response.data.role === "ADMIN") navigate("/admin");
+        else navigate("/dashboard");
+      }
+      else if (response.status == 403) {
+        notifications.show({
+          title: "Failed to signup",
+          message: "Email already exists, please try again",
+          color: "red",
+        });
+      }
+      else {
+        notifications.show({
+          title: "Failed to login",
+          message: "Failed to login, please try again",
+          color: "red",
+        });
+      }
+      console.log("login Data:", formData);
     }
     catch (error) {
-        notifications.show({    
-                title: "Failed to signup", 
-                message: "Email already exists, please try again",
-                color: "red", 
-            });
-        console.error(error);
+      notifications.show({
+        title: "Failed to signup",
+        message: "Email already exists, please try again",
+        color: "red",
+      });
+      console.error(error);
     }
   };
 
