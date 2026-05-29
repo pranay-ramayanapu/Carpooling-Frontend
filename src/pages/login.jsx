@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { GOOGLE_URL, LOGIN_URL } from "../utils/apis";
+import { GOOGLE_AUTH_URL, LOGIN_URL } from "../utils/apis";
 import { notifications } from "@mantine/notifications";
 import axios from "axios";
 
@@ -114,7 +114,7 @@ function Login() {
           <div className="mt-4 text-center">
             <button
               type="button"
-              onClick={() => window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=652720590250-tvni6g7q7d8go16tfduq3pre3m3mkveu.apps.googleusercontent.com&redirect_uri=${GOOGLE_URL}&response_type=code&scope=openid%20email%20profile`}
+              onClick={() => window.location.href = GOOGLE_AUTH_URL}
               className="w-full bg-white text-gray-800 border border-gray-300 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-100"
             >
               <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="h-5 w-5" />

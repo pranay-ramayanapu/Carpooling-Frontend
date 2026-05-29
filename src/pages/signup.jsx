@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
-import { GOOGLE_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
+import { GOOGLE_AUTH_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
 import axios from "axios";
 
 function Signup() {
@@ -285,8 +285,7 @@ function Signup() {
             <button
               type="button"
               onClick={() =>
-                window.location.href =
-                  `https://accounts.google.com/o/oauth2/v2/auth?client_id=652720590250-tvni6g7q7d8go16tfduq3pre3m3mkveu.apps.googleusercontent.com&redirect_uri=${GOOGLE_URL}&response_type=code&scope=openid%20email%20profile`
+                window.location.href = GOOGLE_AUTH_URL
               }
               className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-800 border border-gray-300 py-3 rounded-lg shadow-sm hover:bg-gray-100 text-xl"
               style={{ minWidth: 0 }}

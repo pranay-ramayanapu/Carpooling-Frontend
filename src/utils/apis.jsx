@@ -1,4 +1,9 @@
 const BASE = import.meta.env.VITE_API_BASE_URL || "https://carpooling-5as1.onrender.com";
+export const GOOGLE_CLIENT_ID =
+	import.meta.env.VITE_GOOGLE_CLIENT_ID || "258600895055-7f97ur8se2o9ra7qa2t9mbb3gbolteub.apps.googleusercontent.com";
+export const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+	`${BASE}/auth/google/callback`
+)}&response_type=code&scope=openid%20email%20profile`;
 
 
 // authentication
