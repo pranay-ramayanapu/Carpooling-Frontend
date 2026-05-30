@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GOOGLE_AUTH_URL, LOGIN_URL } from "../utils/apis";
-import { notifications } from "@mantine/notifications";
 import axios from "axios";
 
 
@@ -30,11 +29,6 @@ function Login() {
       const response = await axios.post(LOGIN_URL, formData);
 
       if (response.status == 200) {
-        notifications.show({
-          title: "Succesfully loged in",
-          message: `Succesfully loged in`,
-          color: "green",
-        });
         localStorage.setItem("AuthToken", response.data.jwtToken);
         localStorage.setItem("role", response.data.role);
         if (response.data.role === "ADMIN") navigate("/admin");

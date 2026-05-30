@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { GOOGLE_AUTH_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
 import axios from "axios";
 import PageHeader from "../components/PageHeader";
-import { showSuccess } from "../utils/notify";
+import { showError, showSuccess } from "../utils/notify";
 
 function Signup() {
   const navigate = useNavigate();
@@ -148,6 +148,8 @@ function Signup() {
         <PageHeader
           title="Join CarpoolConnect"
           description="Create your account, verify your email, and choose whether you are a rider or driver."
+          backTo="/"
+          backLabel="Back to Home"
         />
         {formError && (
           <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
