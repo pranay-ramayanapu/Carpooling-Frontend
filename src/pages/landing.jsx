@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Car,
   Users,
@@ -8,14 +8,11 @@ import {
   X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { notifications } from "@mantine/notifications";
 import { VERIFY_TOKEN } from "../utils/apis";
 import axios from "axios";
 
 function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -51,7 +48,11 @@ function Landing() {
     navigate("/");
   };
 
-  
+  const scrollToSection = (sectionId) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -65,7 +66,7 @@ function Landing() {
               </div>
               <span className="text-2xl font-bold text-gray-800">
                 CarpoolConnect
-                
+
               </span>
             </div>
 
@@ -78,13 +79,13 @@ function Landing() {
                 >
                   Dashboard
                 </button>
-              ) :(
-                  <a
-                    href="#features"
-                    className="text-gray-600 hover:text-emerald-600 transition-colors"
-                  >
-                    Features
-                  </a>
+              ) : (
+                <a
+                  href="#features"
+                  className="text-gray-600 hover:text-emerald-600 transition-colors"
+                >
+                  Features
+                </a>
               )}
               <a
                 href="#how-it-works"
@@ -99,13 +100,13 @@ function Landing() {
                 >
                   Profile
                 </a>
-              ):(
-              <a
-                href="#benefits"
-                className="text-gray-600 hover:text-emerald-600 transition-colors"
-              >
-                Benefits
-              </a>
+              ) : (
+                <a
+                  href="#benefits"
+                  className="text-gray-600 hover:text-emerald-600 transition-colors"
+                >
+                  Benefits
+                </a>
               )}
 
               {isLoggedIn ? (
@@ -210,8 +211,8 @@ function Landing() {
               with the perfect ride.
             </p>
             <div className="mb-8 max-w-3xl mx-auto bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md text-sm text-left">
-  <strong>Note:</strong> This project is hosted on a free Render server. The first request may take <strong>30–40 seconds</strong> to load as the server spins up. Subsequent interactions will be faster.
-</div>
+              <strong>Note:</strong> This project is hosted on a free Render server. The first request may take <strong>30–40 seconds</strong> to load as the server spins up. Subsequent interactions will be faster.
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -227,7 +228,11 @@ function Landing() {
                 {isLoggedIn ? "Go to Dashboard" : "Get Started"} <ArrowRight size={20} />
               </button>
 
-              <button className="border-2 border-emerald-500 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-emerald-50 transition-colors">
+              <button
+                type="button"
+                onClick={() => scrollToSection("how-it-works")}
+                className="border-2 border-emerald-500 text-emerald-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-emerald-50 transition-colors"
+              >
                 Learn More
               </button>
             </div>
@@ -304,7 +309,7 @@ function Landing() {
           <button
             onClick={() => {
               if (isLoggedIn) {
-                navigate("/dashboard"); 
+                navigate("/dashboard");
               } else {
                 navigate("/signup");
               }
@@ -317,9 +322,6 @@ function Landing() {
         </div>
       </section>
 
-      {/* Modals */}
-      {isLoginOpen && navigate("/login")}
-      {isSignupOpen && navigate("/signup")}
     </div>
   );
 }

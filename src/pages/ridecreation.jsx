@@ -84,7 +84,6 @@ const RideCreate = () => {
           const res = await axios.put(`${RIDES_URL}/${rideId}`, requestBody, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          alert("✅ Ride updated successfully!");
           showSuccess("Ride updated successfully.");
           console.log(res.data);
         } catch (err) {
@@ -116,7 +115,6 @@ const RideCreate = () => {
         <PageHeader
           title={isUpdate ? "Update Ride" : "Create a Ride"}
           description="Add the start point, optional stops, end point, timing, and vehicle details in a clear order."
-          onBack={() => navigate(-1)}
         />
 
         <div className="bg-white/95 backdrop-blur p-6 md:p-8 rounded-3xl shadow-xl border border-emerald-100">
@@ -243,8 +241,8 @@ const RideCreate = () => {
             <button
               type="submit"
               className={`w-full py-3 rounded-full font-semibold shadow-md transition-all ${loading
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  : "bg-emerald-600 text-white hover:bg-emerald-700"
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-emerald-600 text-white hover:bg-emerald-700"
                 }`}
               disabled={loading}
             >

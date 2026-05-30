@@ -168,7 +168,7 @@ function BookingDetails() {
       },
       (error) => {
         console.error("Error fetching location:", error);
-        alert("Unable to fetch location. Please allow GPS access.");
+        showError("Unable to fetch location. Please allow GPS access.");
         setIsFetchingLocation(false);
       }
     );
@@ -183,7 +183,6 @@ function BookingDetails() {
         <PageHeader
           title="Booking Details"
           description="See your ride, driver, status, and sharing tools in one place."
-          onBack={() => navigate(-1)}
         />
 
         <div className="bg-white p-8 rounded-3xl shadow-lg border border-emerald-100 space-y-8">

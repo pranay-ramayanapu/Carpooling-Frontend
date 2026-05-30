@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GOOGLE_AUTH_URL, LOGIN_URL } from "../utils/apis";
 import { notifications } from "@mantine/notifications";
@@ -11,6 +11,8 @@ function Login() {
     email: "",
     password: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (field, value) => {
@@ -22,6 +24,8 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
     try {
       const response = await axios.post(LOGIN_URL, formData);
 
@@ -53,12 +57,23 @@ function Login() {
       console.log("login Data:", formData);
     }
     catch (error) {
+      const status = error?.response?.status;
+      const responseMessage = error?.response?.data?.message;
+      const fallbackMessage = status === 401 || status === 403
+        ? "Incorrect email or password."
+        : status === 404
+          ? "Login service is unavailable right now. Please try again later."
+          : "Please check your credentials and try again.";
+
+      setErrorMessage(responseMessage || fallbackMessage);
       notifications.show({
-        title: "Failed to signup",
-        message: "Email already exists, please try again",
+        title: "Failed to login",
+        message: responseMessage || fallbackMessage,
         color: "red",
       });
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -69,13 +84,19 @@ function Login() {
           <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
           <button
             onClick={() => navigate("/")}
-            className="text-gray-500 hover:text-gray-700"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
           >
-            <X size={24} />
+            <ArrowLeft size={16} />
+            Home
           </button>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {errorMessage && (
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+              {errorMessage}
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -104,9 +125,17 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 rounded-lg font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200"
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 rounded-lg font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Sign In
+            {isSubmitting ? (
+              <span className="inline-flex items-center justify-center gap-2">
+                <Loader2 size={18} className="animate-spin" />
+                Signing in...
+              </span>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 

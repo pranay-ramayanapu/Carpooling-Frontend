@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { GOOGLE_AUTH_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
 import axios from "axios";
 import PageHeader from "../components/PageHeader";
@@ -30,6 +30,9 @@ function Signup() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Helper: resend OTP cooldown
   const startResendTimeout = () => {
@@ -68,6 +71,7 @@ function Signup() {
       showError("Please enter your email to get OTP.");
       return;
     }
+    setIsSendingOtp(true);
     try {
       await axios.post(
         VERIFY_EMAIL,
@@ -83,10 +87,13 @@ function Signup() {
       startResendTimeout();
     } catch {
       showError("Could not send OTP. Try again.");
+    } finally {
+      setIsSendingOtp(false);
     }
   };
 
   const verifyOtp = async () => {
+    setIsVerifyingOtp(true);
     try {
       const res = await axios.post(
         VERIFY_OTP,
@@ -100,6 +107,8 @@ function Signup() {
       }
     } catch {
       showError("Invalid or expired OTP.");
+    } finally {
+      setIsVerifyingOtp(false);
     }
   };
 
@@ -109,6 +118,7 @@ function Signup() {
       showError("Please verify your OTP before signing up.");
       return;
     }
+    setIsSubmitting(true);
     try {
       const response = await axios.post(SIGNUP_URL, signupData);
       if (response.status === 200) {
@@ -123,6 +133,8 @@ function Signup() {
       }
     } catch {
       showError("Failed to signup. Email already exists or unforeseen error.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -132,7 +144,6 @@ function Signup() {
         <PageHeader
           title="Join CarpoolConnect"
           description="Create your account, verify your email, and choose whether you are a rider or driver."
-          onBack={() => navigate(-1)}
         />
         {/* Guidance */}
         <div className="w-full bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-2xl mb-8 text-base shadow-sm">
@@ -175,10 +186,15 @@ function Signup() {
                 <button
                   type="button"
                   onClick={sendOtp}
-                  className="bg-emerald-500 text-white px-4 py-2 rounded disabled:opacity-60"
-                  disabled={!signupData.email || (otpSent && resendTimeout > 0)}
+                  className="bg-emerald-500 text-white px-4 py-2 rounded disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                  disabled={!signupData.email || (otpSent && resendTimeout > 0) || isSendingOtp}
                 >
-                  {otpSent && resendTimeout > 0
+                  {isSendingOtp ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Sending...
+                    </>
+                  ) : otpSent && resendTimeout > 0
                     ? `Resend OTP (${resendTimeout}s)`
                     : otpSent
                       ? "Resend OTP"
@@ -198,9 +214,17 @@ function Signup() {
                       <button
                         type="button"
                         onClick={verifyOtp}
-                        className="bg-emerald-600 text-white px-4 py-2 rounded"
+                        disabled={isVerifyingOtp}
+                        className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center gap-2"
                       >
-                        Verify OTP
+                        {isVerifyingOtp ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          "Verify OTP"
+                        )}
                       </button>
                     </div>
                   </div>
@@ -274,9 +298,16 @@ function Signup() {
             <button
               type="submit"
               className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3 rounded-lg text-xl font-bold hover:from-emerald-600 hover:to-emerald-700 transition"
-              disabled={!otpVerified}
+              disabled={!otpVerified || isSubmitting}
             >
-              Create Account
+              {isSubmitting ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Loader2 size={18} className="animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                "Create Account"
+              )}
             </button>
             <button
               type="button"

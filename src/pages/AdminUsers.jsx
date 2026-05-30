@@ -3,6 +3,7 @@ import { Search, UserMinus, ArrowUpRight, Loader, ShieldCheck, ChevronLeft, Chev
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DELETE_BANNED_USER, GET_BANNED_USERS_URL, GET_USER_LIST, POST_BANNED_USER, PROMOTE_USER } from "../utils/apis";
+import { showError, showSuccess } from "../utils/notify";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -87,10 +88,11 @@ function AdminUsers() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("User banned successfully.");
+      showSuccess("User banned successfully.");
       setBannedUsers([...bannedUsers, banModal.email]);
     } catch (err) {
       console.error("Ban failed", err);
+      showError("Failed to ban user.");
     } finally {
       setBanModal({ show: false, email: "" });
       setBanReason("");
@@ -103,10 +105,11 @@ function AdminUsers() {
       await axios.delete(`${DELETE_BANNED_USER}/${email}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("User unbanned successfully.");
+      showSuccess("User unbanned successfully.");
       setBannedUsers(bannedUsers.filter((e) => e !== email));
     } catch (err) {
       console.error("Unban failed", err);
+      showError("Failed to unban user.");
     }
   };
 
@@ -205,9 +208,8 @@ function AdminUsers() {
                 <button
                   key={i}
                   onClick={() => setPage(i)}
-                  className={`px-3 py-1 rounded border ${
-                    page === i ? "bg-emerald-500 text-white" : "bg-white hover:bg-gray-100"
-                  }`}
+                  className={`px-3 py-1 rounded border ${page === i ? "bg-emerald-500 text-white" : "bg-white hover:bg-gray-100"
+                    }`}
                 >
                   {i + 1}
                 </button>

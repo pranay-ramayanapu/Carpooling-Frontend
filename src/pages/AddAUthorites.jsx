@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import LocationSearchInput from "./LocationSearchInput";
-import { ADD_AUTHORITY, EDIT_AUTHORITY,GET_AUTHORITY } from "../utils/apis";
+import { ADD_AUTHORITY, EDIT_AUTHORITY, GET_AUTHORITY } from "../utils/apis";
+import { showError, showSuccess } from "../utils/notify";
 
 function AddAuthorities() {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -13,7 +14,7 @@ function AddAuthorities() {
 
   const handleAdd = async () => {
     if (!selectedLocation || !email) {
-      alert("Please select a location and provide an email.");
+      showError("Please select a location and provide an email.");
       return;
     }
 
@@ -36,19 +37,19 @@ function AddAuthorities() {
       );
 
       if (res.status === 200) {
-        alert("✅ Successfully added");
+        showSuccess("Successfully added.");
         resetForm();
       }
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to add!");
+      showError("Failed to add authority.");
     }
   };
 
   const handleUpdate = async () => {
-    console.log(selectedLocation,email,prevLabel);
+    console.log(selectedLocation, email, prevLabel);
     if (!selectedLocation || !email || !prevLabel) {
-      alert("Missing data to update.");
+      showError("Missing data to update.");
       return;
     }
 
@@ -72,18 +73,18 @@ function AddAuthorities() {
       );
 
       if (res.status === 200) {
-        alert("✅ Successfully updated");
+        showSuccess("Successfully updated.");
         resetForm();
       }
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to update!");
+      showError("Failed to update authority.");
     }
   };
 
   const fetchAuth = async () => {
     if (!selectedLocation) {
-      alert("Please select a location.");
+      showError("Please select a location.");
       return;
     }
 
@@ -106,11 +107,11 @@ function AddAuthorities() {
         setSelectedLocation({ label: res.data.city }); // sets new label only for UI
         setMode("update");
       } else {
-        alert("Authorities data not found.");
+        showError("Authorities data not found.");
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
+      showError("Something went wrong.");
     }
   };
 

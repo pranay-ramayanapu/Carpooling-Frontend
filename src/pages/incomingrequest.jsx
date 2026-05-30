@@ -8,20 +8,32 @@ import { showError, showSuccess } from "../utils/notify";
 function IncomingRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRequests = async () => {
+      const token = localStorage.getItem("AuthToken");
+      if (!token) {
+        setError("Please sign in as a driver to view incoming requests.");
+        setLoading(false);
+        return;
+      }
       try {
         const res = await axios.get(GET_DRIVER_BOOKING, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("AuthToken")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setRequests(res.data);
         console.log(res.data);
       } catch (err) {
         console.error("Failed to fetch requests:", err);
+        if (err?.response?.status === 403) {
+          setError("You do not have access to driver requests. Please log in as a driver.");
+        } else {
+          setError("Unable to load incoming requests right now.");
+        }
       } finally {
         setLoading(false);
       }
@@ -54,13 +66,33 @@ function IncomingRequests() {
   if (loading)
     return <div className="text-center text-gray-500 mt-10">Loading incoming requests...</div>;
 
+  if (error)
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8 px-4 md:px-10">
+        <div className="max-w-4xl mx-auto">
+          <PageHeader
+            title="Incoming Ride Requests"
+            description="Driver-only view for booking approvals and route review."
+          />
+          <div className="rounded-2xl bg-white p-8 shadow-sm border border-emerald-100 text-center space-y-4">
+            <p className="text-lg font-semibold text-gray-800">{error}</p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 font-semibold text-white hover:bg-emerald-700"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8 px-4 md:px-10">
       <div className="max-w-6xl mx-auto">
         <PageHeader
           title="Incoming Ride Requests"
           description="Approve riders, review their route preferences, and keep the ride flow consistent with the rest of the app."
-          onBack={() => navigate(-1)}
         />
 
         {requests.length === 0 ? (
@@ -77,13 +109,13 @@ function IncomingRequests() {
                     <p className="text-lg font-semibold text-gray-800">
                       Rider:{" "}
                       {bookingRequest.approved
-                        ? `${bookingRequest.rider.firstName} ${bookingRequest.rider.lastName}`
-                        : `${bookingRequest.rider.firstName.charAt(0)}.`}
+                        ? `${bookingRequest.rider?.firstName ?? "Unknown"} ${bookingRequest.rider?.lastName ?? "Rider"}`
+                        : `${bookingRequest.rider?.firstName?.charAt(0) ?? "?"}.`}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
-                      From: <strong>{bookingRequest.pickup.label}</strong>
+                      From: <strong>{bookingRequest.pickup?.label ?? "Unknown pickup"}</strong>
                       <br />
-                      To: <strong>{bookingRequest.destination.label}</strong>
+                      To: <strong>{bookingRequest.destination?.label ?? "Unknown destination"}</strong>
                     </p>
                     {bookingRequest.preferredRoute?.length > 0 && (
                       <p className="text-sm text-gray-500 mt-1">

@@ -3,6 +3,7 @@ import { Loader, Trash2 } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { DELETE_RIDE_URL, RIDES_URL } from "../utils/apis";
+import { showError, showSuccess } from "../utils/notify";
 
 function AdminRides() {
   const [rides, setRides] = useState([]);
@@ -52,11 +53,11 @@ function AdminRides() {
         r.driver.email.toLowerCase().includes(driver.toLowerCase())
       );
 
-      result.sort((a, b) => {
-    const dateA = new Date(a.createdAt);
-    const dateB = new Date(b.createdAt);
-    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-  });
+    result.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
 
     setFiltered(result);
   }, [status, city, date, driver, rides]);
@@ -68,9 +69,10 @@ function AdminRides() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRides(rides.filter((r) => r.id !== id));
-      alert("Ride deleted");
+      showSuccess("Ride deleted.");
     } catch (err) {
       console.error("Delete failed", err);
+      showError("Failed to delete ride.");
     }
   };
 
@@ -112,9 +114,9 @@ function AdminRides() {
           <button
             onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
             className="border px-3 py-2 rounded text-sm bg-gray-200 hover:bg-gray-300"
-            >
+          >
             Sort: {sortOrder === "desc" ? "Newest ⬇" : "Oldest ⬆"}
-            </button>
+          </button>
 
         </div>
 
@@ -166,7 +168,7 @@ function AdminRides() {
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex gap-2">
-                        {r.status=="OPEN" && (<button
+                        {r.status == "OPEN" && (<button
                           onClick={e => {
                             e.stopPropagation();
                             navigate(`/create/${r.id}`);
