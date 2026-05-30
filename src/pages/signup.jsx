@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { GOOGLE_AUTH_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
 import axios from "axios";
+import PageHeader from "../components/PageHeader";
+import { showError, showSuccess } from "../utils/notify";
 
 function Signup() {
   const navigate = useNavigate();
@@ -63,7 +65,7 @@ function Signup() {
 
   const sendOtp = async () => {
     if (!signupData.email) {
-      alert("Please enter your email to get OTP.");
+      showError("Please enter your email to get OTP.");
       return;
     }
     try {
@@ -77,10 +79,10 @@ function Signup() {
       setOtpSent(true);
       setOtpVerified(false);
       setOtp("");
-      alert("OTP sent! Check your email.");
+      showSuccess("OTP sent. Check your email.");
       startResendTimeout();
     } catch {
-      alert("Could not send OTP. Try again.");
+      showError("Could not send OTP. Try again.");
     }
   };
 
@@ -92,55 +94,48 @@ function Signup() {
       );
       if (res.status === 200) {
         setOtpVerified(true);
-        alert("OTP verification successful.");
+        showSuccess("OTP verification successful.");
       } else {
         throw new Error();
       }
     } catch {
-      alert("Invalid or expired OTP.");
+      showError("Invalid or expired OTP.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!otpVerified) {
-      alert("Please verify your OTP before signing up.");
+      showError("Please verify your OTP before signing up.");
       return;
     }
     try {
       const response = await axios.post(SIGNUP_URL, signupData);
       if (response.status === 200) {
-        alert("Successfully signed up!");
+        showSuccess("Successfully signed up!");
         localStorage.setItem("AuthToken", response.data.jwtToken);
         localStorage.setItem("role", response.data.role);
         navigate("/dashboard");
       } else if (response.status === 403) {
-        alert("Email already exists, please try again.");
+        showError("Email already exists, please try again.");
       } else {
-        alert("Failed to signup, please try again.");
+        showError("Failed to signup, please try again.");
       }
     } catch {
-      alert("Failed to signup. Email already exists or unforeseen error.");
+      showError("Failed to signup. Email already exists or unforeseen error.");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-emerald-100 via-white to-green-100 px-0">
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl mx-4 p-12 flex flex-col">
-        {/* Top Bar */}
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-4xl font-extrabold text-emerald-700 flex gap-2 items-center">
-            <span role="img" aria-label="wheel">🛞</span> Join CarpoolConnect
-          </h2>
-          <button
-            onClick={() => navigate("/")}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X size={28} />
-          </button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50 px-4 py-8">
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl mx-auto p-6 md:p-10 flex flex-col border border-emerald-100">
+        <PageHeader
+          title="Join CarpoolConnect"
+          description="Create your account, verify your email, and choose whether you are a rider or driver."
+          onBack={() => navigate(-1)}
+        />
         {/* Guidance */}
-        <div className="w-full bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-8 text-base shadow">
+        <div className="w-full bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-2xl mb-8 text-base shadow-sm">
           <strong>Safety Notice:</strong> Please provide a valid and accessible <span className="font-semibold">Emergency Email</span>. This address may be used to contact you or your emergency contact during emergencies or account recovery.
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>

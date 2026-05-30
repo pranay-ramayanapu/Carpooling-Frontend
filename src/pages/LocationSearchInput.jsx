@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
-const LocationSearchInput = ({ value, onSelect }) => {
+const LocationSearchInput = ({ value, onSelect, placeholder = "Search location..." }) => {
   const [query, setQuery] = useState(value?.label || "");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
@@ -53,15 +53,15 @@ const LocationSearchInput = ({ value, onSelect }) => {
         value={query}
         onChange={e => fetchSuggestions(e.target.value)}
         onBlur={() => setTimeout(() => setSuggestions([]), 200)}
-        placeholder="Search location..."
-        className="input-style w-full"
+        placeholder={placeholder}
+        className="input-style w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
       />
       {suggestions.length > 0 && (
-        <ul className="absolute z-10 bg-white border rounded shadow w-full max-h-60 overflow-y-auto mt-1">
+        <ul className="absolute z-10 bg-white border border-emerald-100 rounded-2xl shadow-xl w-full max-h-60 overflow-y-auto mt-2">
           {suggestions.map((place, idx) => (
             <li
               key={idx}
-              className="px-4 py-2 hover:bg-emerald-100 cursor-pointer text-sm"
+              className="px-4 py-3 hover:bg-emerald-50 cursor-pointer text-sm border-b border-gray-100 last:border-b-0"
               onMouseDown={() => handleSelect(place)}
             >
               {place.display_name}
