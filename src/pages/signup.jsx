@@ -112,7 +112,8 @@ function Signup() {
       if (response.status === 200) {
         alert("Successfully signed up!");
         localStorage.setItem("AuthToken", response.data.jwtToken);
-        navigate("/Dashboard");
+        localStorage.setItem("role", response.data.role);
+        navigate("/dashboard");
       } else if (response.status === 403) {
         alert("Email already exists, please try again.");
       } else {
