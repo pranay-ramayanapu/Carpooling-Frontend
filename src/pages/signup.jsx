@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { GOOGLE_AUTH_URL, SIGNUP_URL, VERIFY_EMAIL, VERIFY_OTP } from "../utils/apis";
 import axios from "axios";
 import PageHeader from "../components/PageHeader";
-import { showError, showSuccess } from "../utils/notify";
+import { showSuccess } from "../utils/notify";
 
 function Signup() {
   const navigate = useNavigate();
@@ -33,6 +33,7 @@ function Signup() {
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
 
   // Helper: resend OTP cooldown
   const startResendTimeout = () => {
@@ -68,9 +69,10 @@ function Signup() {
 
   const sendOtp = async () => {
     if (!signupData.email) {
-      showError("Please enter your email to get OTP.");
+      setFormError("Please enter your email to get OTP.");
       return;
     }
+    setFormError("");
     setIsSendingOtp(true);
     try {
       await axios.post(
@@ -102,11 +104,12 @@ function Signup() {
       if (res.status === 200) {
         setOtpVerified(true);
         showSuccess("OTP verification successful.");
+        setFormError("");
       } else {
         throw new Error();
       }
     } catch {
-      showError("Invalid or expired OTP.");
+      setFormError("Invalid or expired OTP.");
     } finally {
       setIsVerifyingOtp(false);
     }
@@ -115,9 +118,10 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!otpVerified) {
-      showError("Please verify your OTP before signing up.");
+      setFormError("Please verify your OTP before signing up.");
       return;
     }
+    setFormError("");
     setIsSubmitting(true);
     try {
       const response = await axios.post(SIGNUP_URL, signupData);
@@ -127,12 +131,12 @@ function Signup() {
         localStorage.setItem("role", response.data.role);
         navigate("/dashboard");
       } else if (response.status === 403) {
-        showError("Email already exists, please try again.");
+        setFormError("Email already exists, please try again.");
       } else {
-        showError("Failed to signup, please try again.");
+        setFormError("Failed to signup, please try again.");
       }
     } catch {
-      showError("Failed to signup. Email already exists or unforeseen error.");
+      setFormError("Failed to signup. Email already exists or unforeseen error.");
     } finally {
       setIsSubmitting(false);
     }
@@ -145,6 +149,11 @@ function Signup() {
           title="Join CarpoolConnect"
           description="Create your account, verify your email, and choose whether you are a rider or driver."
         />
+        {formError && (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {formError}
+          </div>
+        )}
         {/* Guidance */}
         <div className="w-full bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-2xl mb-8 text-base shadow-sm">
           <strong>Safety Notice:</strong> Please provide a valid and accessible <span className="font-semibold">Emergency Email</span>. This address may be used to contact you or your emergency contact during emergencies or account recovery.
