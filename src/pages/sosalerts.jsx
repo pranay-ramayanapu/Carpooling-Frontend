@@ -48,6 +48,8 @@ function SosAlerts() {
         <PageHeader
           title="SOS Alerts"
           description="Review safety alerts and resolve them from one central screen."
+          backTo={role === "ADMIN" ? "/admin" : "/dashboard"}
+          backLabel={role === "ADMIN" ? "Back to Admin Dashboard" : "Back to Dashboard"}
         />
 
         {isLoading ? (

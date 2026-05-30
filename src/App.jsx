@@ -7,6 +7,7 @@ import { Notifications } from "@mantine/notifications";
 import { MantineProvider } from "@mantine/core";
 import { createContext } from "react";
 import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import Dashboard from "./pages/dashboard";
 import SearchRides from "./pages/searchrides";
 import RideCreation from "./pages/ridecreation";
@@ -29,6 +30,16 @@ import { PublicOnly, RequireAuth } from "./components/RouteGuards.jsx";
 
 
 export const AuthContext = createContext();
+function DashboardEntry() {
+  const role = localStorage.getItem("role");
+
+  if (role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <Dashboard />;
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -46,7 +57,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
           <Route path="/signup" element={<PublicOnly><Signup backTo="/" backLabel="Back to Home" /></PublicOnly>} />
-          <Route path='/dashboard' element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path='/dashboard' element={<RequireAuth><DashboardEntry /></RequireAuth>} />
           <Route path="/search" element={<RequireAuth><SearchRides /></RequireAuth>} />
           <Route path="/create/:rideId" element={<RequireAuth allowedRoles={['DRIVER']}><RideCreation /></RequireAuth>} />
           <Route path="/create" element={<RequireAuth allowedRoles={['DRIVER']}><RideCreation /></RequireAuth>} />
@@ -56,7 +67,7 @@ function App() {
           <Route path="/my-bookings/:id" element={<RequireAuth><BookingDetails /></RequireAuth>} />
           <Route path="/ride-details/:id" element={<RequireAuth><RideDetails /></RequireAuth>} />
           <Route path="/driver-rides" element={<RequireAuth allowedRoles={['DRIVER']}><DriverRides /></RequireAuth>} />
-          <Route path="/alerts" element={<RequireAuth allowedRoles={['DRIVER']}><SosAlerts /></RequireAuth>} />
+          <Route path="/alerts" element={<RequireAuth allowedRoles={['DRIVER', 'ADMIN']}><SosAlerts /></RequireAuth>} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route path="/admin/authorities" element={<RequireAuth allowedRoles={['ADMIN']}><AddAuthorities /></RequireAuth>} />
           <Route path="/admin" element={<RequireAuth allowedRoles={['ADMIN']}><DashboardAdmin /></RequireAuth>} />

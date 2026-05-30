@@ -14,6 +14,7 @@ import axios from "axios";
 function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
@@ -22,18 +23,23 @@ function Landing() {
   useEffect(() => {
     const verifyToken = async () => {
       const token = localStorage.getItem("AuthToken");
+      const role = localStorage.getItem("role");
       setIsLoggedIn(!!token);
+      setUserRole(role || "");
 
       if (token) {
         try {
           const res = await axios.post(VERIFY_TOKEN, { token });
           if (res.status === 200) {
             setIsLoggedIn(true);
+            setUserRole(role || "");
           }
         } catch (error) {
           console.error("Token verification failed:", error);
           localStorage.removeItem("AuthToken");
+          localStorage.removeItem("role");
           setIsLoggedIn(false);
+          setUserRole("");
         }
       }
     };
@@ -44,9 +50,13 @@ function Landing() {
 
   const handleLogout = () => {
     localStorage.removeItem("AuthToken");
+    localStorage.removeItem("role");
     setIsLoggedIn(false);
+    setUserRole("");
     navigate("/");
   };
+
+  const getPrimaryDashboardPath = () => (userRole === "ADMIN" ? "/admin" : "/dashboard");
 
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -74,7 +84,7 @@ function Landing() {
             <div className="hidden md:flex items-center space-x-8">
               {isLoggedIn ? (
                 <button
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => navigate(getPrimaryDashboardPath())}
                   className="text-emerald-600 hover:text-emerald-700 font-semibold"
                 >
                   Dashboard
@@ -218,7 +228,7 @@ function Landing() {
               <button
                 onClick={() => {
                   if (isLoggedIn) {
-                    navigate("/dashboard");
+                    navigate(getPrimaryDashboardPath());
                   } else {
                     navigate("/signup");
                   }
@@ -309,7 +319,7 @@ function Landing() {
           <button
             onClick={() => {
               if (isLoggedIn) {
-                navigate("/dashboard");
+                navigate(getPrimaryDashboardPath());
               } else {
                 navigate("/signup");
               }
@@ -318,10 +328,8 @@ function Landing() {
           >
             {isLoggedIn ? "Go to Dashboard" : "Get Started today"} <ArrowRight size={20} />
           </button>
-
         </div>
       </section>
-
     </div>
   );
 }
